@@ -2,6 +2,8 @@
 
 RESTful API for a basic CRUD notifications service
 
+[![CircleCI](https://circleci.com/gh/helyes/notification_service.svg?style=svg)](https://circleci.com/gh/helyes/notification_service)
+
 ## Dependencies
 
 - Ruby 2.3.4

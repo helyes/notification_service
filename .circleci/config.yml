@@ -61,6 +61,11 @@ jobs:
         command: dockerize -wait tcp://localhost:3306 -timeout 1m
 
     - run:
+        name: Prepare database config
+        command: |
+          [ -f ~/notification_service/config/database.yml ] || cp -v ~/notification_service/config/database.sample.yml ~/notification_service/config/database.yml
+
+    - run:
         name: Database create
         command: bundle exec rake db:create
 

@@ -1,0 +1,29 @@
+# https://rubocop.readthedocs.io/en/latest/
+AllCops:
+  Exclude:
+  - 'db/**/*'
+  - 'config/**/*'
+  - 'bin/**/*'
+
+# Metrics
+Metrics/LineLength:
+  Max: 140
+Metrics/BlockLength:
+  Max: 250
+Metrics/MethodLength:
+  Max: 100
+Metrics/AbcSize:
+  Max: 20
+
+# Styles
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/RescueStandardError:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Style/BracesAroundHashParameters:
+  EnforcedStyle: context_dependent

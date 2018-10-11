@@ -1,0 +1,3 @@
+---
+max_conns: 1024
+threaded: true

@@ -1,0 +1,27 @@
+#!/usr/bin/env ruby
+
+require File.expand_path('../../config/environment', __FILE__)
+
+ENGINE=(ARGV[0] || "p").freeze
+
+def boot_irb
+  puts"\e[33mBooting irb...\e[0m"
+  ARGV.clear
+  require 'irb'
+  IRB.start
+end
+
+def boot_pry
+  puts"\e[32mBooting pry...\e[0m"
+  require 'pry'
+  Pry.start
+end
+
+case (ARGV[0] || "p")
+  when 'p'
+    boot_pry
+  when 'i'
+    boot_irb
+  else
+    puts "Use \e[32mp for \e[32mpry\e[0m and \e[33mi for \e[33mirb\e[0m. Parameter defaults to p"
+end

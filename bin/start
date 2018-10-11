@@ -1,0 +1,49 @@
+#!/bin/sh
+
+###################################################################
+#                                                                 #
+#  Starts thin server on rackup either single or multithreaded    #
+#  See help (-h) for details                                      #
+#                                                                 #
+###################################################################
+
+# defaulting to s for simplicity
+COMMAND="${1:-s}"
+
+PROJECT_NAME="$(basename "$(dirname "$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )")")"
+
+YELLOW="\\e[33m"
+RED="\\e[32m"
+CRESET="\\e[0m"
+
+usage () {
+  printf "\\nUsage:\\n\\n"
+  printf "%s m|[s] \\n\\n" "$0"
+  printf "\\t${RED}s${CRESET}: starts %s server ${RED}single threaded${CRESET}\\n"  "${PROJECT_NAME}"
+  printf "\\t${YELLOW}m${CRESET}: starts %s server ${YELLOW}multi threaded${CRESET}\\n"  "${PROJECT_NAME}"
+  printf "\\th: this help scren\\n\\n"
+  printf "Note: this script is for dev use only. Sanity checking is not in place\\n\\n"
+  exit 9
+}
+
+single_thread () {
+    printf "Starting thin ${RED}single threaded${CRESET}...\\n"
+    rackup -p 3000
+}
+
+multi_thread () {
+    printf "Starting thin ${YELLOW}multi threaded${CRESET}...\\n"
+    bundle exec thin start -C ./config/thin.yml
+}
+
+case "$COMMAND" in
+  s) single_thread
+     ;;
+  m) multi_thread
+     ;;
+  h) usage
+    ;;   
+  *) printf "\\nUnknown parameter: %s\\n" "$COMMAND"
+     usage
+    ;;
+esac

@@ -1,0 +1,109 @@
+version: 2
+jobs:
+  build:
+    branches:
+      ignore:
+      - playground
+    # Needs paid plan to run tests parallel
+    parallelism: 1
+    working_directory: ~/notification_service
+    docker:
+    - image: circleci/ruby:2.3.7-browsers
+      environment:
+        BUNDLE_JOBS: 3
+        BUNDLE_RETRY: 3
+        BUNDLE_PATH: vendor/bundle
+        PGHOST: 127.0.0.1
+        RAILS_ENV: test
+    - image: docker pull circleci/mysql:5.7
+      environment:
+        POSTGRES_PASSWORD: ""
+    steps:
+
+    # Checkout code
+    - checkout
+
+    # Create test result folder (should use {working_directory})
+    - run:
+        name: Creating project test_results folder
+        command: mkdir ~/notification_service/test_results
+
+    # Create /test_result folder. It's for artifacts and in root on purpose
+    - run:
+        name: Creating /test_results folder
+        command: sudo mkdir /test_results && sudo chmod a+w /test_results
+
+    # Which version of bundler?
+    - run:
+        name: Which bundler?
+        command: bundle -v
+
+    # Restore bundle cache
+    - restore_cache:
+        keys:
+        - notification_service-bundle-{{ checksum "Gemfile.lock" }}
+        - notification_service-bundle-
+
+    - run:
+        name: Bundle Install
+        command: bundle install
+
+    # Store bundle cache
+    - save_cache:
+        key: notification_service-bundle-{{ checksum "Gemfile.lock" }}
+        paths:
+        - vendor/bundle
+
+    - run:
+        name: Wait for DB
+        command: dockerize -wait tcp://localhost:3306 -timeout 1m
+
+    - run:
+        name: Database create
+        command: bundle exec rake db:create
+
+    - run:
+        name: Database setup
+        command: bundle exec rake db:migrate
+
+    # Run rspec in parallel
+    - type: shell
+      name: Rspec
+      command: |
+        bundle exec rspec --profile 10 \
+                            --format RspecJunitFormatter \
+                            --out test_results/rspec.xml \
+                            --format progress \
+                            --no-color \
+                            --backtrace \
+                            $(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings --timings-type=classname)
+
+
+    # Save test results for timing analysis
+    - store_test_results:
+        path: test_results
+
+#      - run:
+#          name: Generate RSpec html report
+#          command: |
+#            node_modules/xunit-viewer/bin/xunit-viewer --results=test_results --output=test_results --title="Notification service"
+#            mv test_results/xunit-viewer.html test_results/unit-test-report.html
+#          when: always
+
+    - run:
+        name: Generate rubocop report
+        command: |
+          rubocop api app config spec --parallel --no-color --extra-details --format html -o test_results/rubocop-report.html || echo "Forcing rubocop to pass"
+        when: always
+
+    - run:
+        name: Create artifacts
+        command: |
+          cp -r test_results/* /test_results/
+          mv /test_results/rspec.xml /test_results/coverage/
+          [ -f /test_results/coverage/index.html ] && cp /test_results/coverage/index.html /test_results/coverage-report.html
+          [ -f /test_results/coverage-report.html ] && sed -i -e 's/\.\/assets\//\.\/coverage\/assets\//g' /test_results/coverage-report.html
+        when: always
+
+    - store_artifacts:
+        path: /test_results

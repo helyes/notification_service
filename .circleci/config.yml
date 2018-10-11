@@ -15,6 +15,7 @@ jobs:
         BUNDLE_PATH: vendor/bundle
         PGHOST: 127.0.0.1
         RAILS_ENV: test
+        RACK_ENV: test
     - image: circleci/mysql:5.7
       environment:
         POSTGRES_PASSWORD: ""

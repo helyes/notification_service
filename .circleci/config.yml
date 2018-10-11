@@ -15,7 +15,7 @@ jobs:
         BUNDLE_PATH: vendor/bundle
         PGHOST: 127.0.0.1
         RAILS_ENV: test
-    - image: docker pull circleci/mysql:5.7
+    - image: circleci/mysql:5.7
       environment:
         POSTGRES_PASSWORD: ""
     steps:
@@ -26,7 +26,8 @@ jobs:
     # Create test result folder (should use {working_directory})
     - run:
         name: Creating project test_results folder
-        command: mkdir ~/notification_service/test_results
+        command: |
+          [ -d ~/notification_service/test_results ] || mkdir ~/notification_service/test_results
 
     # Create /test_result folder. It's for artifacts and in root on purpose
     - run:

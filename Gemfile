@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '2.3.4'
+ruby '2.3.7'
 
 gem 'activerecord', '~> 4.2.7', require: 'active_record'
 gem 'grape', '~> 0.17.0'
@@ -25,6 +25,7 @@ group :test do
   gem 'factory_girl'
   gem 'rack-test'
   gem 'rspec'
+  gem "rspec_junit_formatter"
   gem 'shoulda-matchers'
   gem 'simplecov', require: false
 end

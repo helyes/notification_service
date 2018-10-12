@@ -7,7 +7,7 @@ SimpleCov.start do
   add_filter 'lib'
 
   add_group 'API', 'api'
-  add_group 'App', 'app'
+  add_group 'App', 'formatter'
   add_group 'Config', 'config'
   add_group 'Spec', 'spec'
 end

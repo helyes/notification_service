@@ -141,7 +141,7 @@ describe APIv1::Notifications do
 
     it 'returns requested notification' do
       get "/api/v1/notifications/#{notification.id}"
-
+      puts "XXXXResponse: #{last_response.body}"
       expect(last_response.status).to eq(200)
       entity = NotificationSpecHelper.fetch_first_entity_as_hash(last_response.body)
       expect(entity.to_json).to eq(expected_response)
@@ -150,7 +150,7 @@ describe APIv1::Notifications do
 
     it 'returns error when notification is not found' do
       get '/api/v1/notifications/1000'
-
+      puts "XXXXResponse: #{last_response.body}"
       expect(last_response.status).to eq(404)
       entity = NotificationSpecHelper.fetch_first_error_as_hash(last_response.body)
       expect(entity.to_json).to eq(expected_response_for_not_found)

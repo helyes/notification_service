@@ -39,6 +39,12 @@ describe APIv1::Notifications do
       expect(entities.count).to eq limit
       expect(entities.to_json).to eq(expected_response)
       assert_metadata(last_response.body, 'success', limit)
+      response_hash = JSON.parse last_response.body
+      expect(response_hash['has_more']).to eq true
+      expect(response_hash['next_page'].blank?).to be_falsey
+      next_page_query = Rack::Utils.parse_query URI(response_hash['next_page']).query
+      expect(next_page_query['limit']).to eq '10'
+      expect(next_page_query['offset']).to eq '10'
     end
 
     it 'considers offset' do
@@ -141,7 +147,7 @@ describe APIv1::Notifications do
 
     it 'returns requested notification' do
       get "/api/v1/notifications/#{notification.id}"
-      puts "XXXXResponse: #{last_response.body}"
+      #puts "XXXXResponse: #{last_response.body}"
       expect(last_response.status).to eq(200)
       entity = NotificationSpecHelper.fetch_first_entity_as_hash(last_response.body)
       expect(entity.to_json).to eq(expected_response)
@@ -150,7 +156,6 @@ describe APIv1::Notifications do
 
     it 'returns error when notification is not found' do
       get '/api/v1/notifications/1000'
-      puts "XXXXResponse: #{last_response.body}"
       expect(last_response.status).to eq(404)
       entity = NotificationSpecHelper.fetch_first_error_as_hash(last_response.body)
       expect(entity.to_json).to eq(expected_response_for_not_found)

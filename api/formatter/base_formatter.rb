@@ -14,15 +14,27 @@ module API
       end
 
       def self.time_taken(start_time, end_time)
+        # not mission critical, letting it go if parameters are invalid
+        return 0 unless start_time && end_time && end_time > start_time
+
         ((end_time - start_time) * 1000).round(2)
       end
 
-      def self.add_item_count(body, object)
-        body[:item_count] = (object.class == Array && object.count) || 1
+      def self.add_item_count(body, payload)
+        body[:item_count] = case payload
+                            when NilClass
+                              0
+                            when Array
+                              payload.count
+                            else
+                              1
+                            end
       end
 
       def self.executor(env)
         # rubocop:disable Lint/AmbiguousBlockAssociation:
+        return 'unknown' unless env && env[Grape::Env::API_ENDPOINT]
+
         endpoint = env[Grape::Env::API_ENDPOINT]
         result = []
         result << endpoint.namespace == PATH_SEPARATOR ? '' : endpoint.namespace
@@ -32,6 +44,10 @@ module API
       end
 
       def self.path(env)
+        # not mission critical, returns / if anything unexpected
+        # ensuring env[Grape::Env::API_ENDPOINT] is populated is enough, rest is up to grape
+        return '/' unless env && env[Grape::Env::API_ENDPOINT]
+
         env[Grape::Env::API_ENDPOINT].request.path
       end
 

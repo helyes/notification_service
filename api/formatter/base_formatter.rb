@@ -50,7 +50,6 @@ module API
 
         env[Grape::Env::API_ENDPOINT].request.path
       end
-
     end
   end
 end

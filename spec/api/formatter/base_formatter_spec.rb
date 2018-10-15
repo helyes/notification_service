@@ -3,7 +3,6 @@ require 'spec_helper'
 module API
   module Formatter
     describe BaseFormatter do
-
       describe 'init_body' do
         it 'creates meta fields in body hash' do
           start_time = Time.now - 0.1
@@ -11,7 +10,7 @@ module API
           expected_request_path = '/api/notifications/1'
           grape_endpoint = double
           grape_endpoint_request = double
-          allow(grape_endpoint).to receive(:request) {grape_endpoint_request}
+          allow(grape_endpoint).to receive(:request) { grape_endpoint_request }
           allow(grape_endpoint_request).to receive(:path) { expected_request_path }
           allow(grape_endpoint).to receive(:namespace) { '/notifications' }
           allow(grape_endpoint).to receive(:options) { { path: [':id'], for: APIv1::Notifications } }
@@ -71,16 +70,14 @@ module API
           BaseFormatter.add_item_count(body, payload)
           expect(body[:item_count]).to eq 0
         end
-
       end
 
       describe 'path' do
-
         it 'returns grape request path' do
           expected_request_path = '/api/example/path'
           grape_endpoint = double
           grape_endpoint_request = double
-          allow(grape_endpoint).to receive(:request) {grape_endpoint_request}
+          allow(grape_endpoint).to receive(:request) { grape_endpoint_request }
           allow(grape_endpoint_request).to receive(:path) { expected_request_path }
           env = { Grape::Env::API_ENDPOINT => grape_endpoint }
 
@@ -99,7 +96,6 @@ module API
       end
 
       describe 'executor' do
-
         it 'returns correct executor' do
           grape_endpoint = double
           allow(grape_endpoint).to receive(:namespace) { '/notifications' }
@@ -117,10 +113,7 @@ module API
           expected_executor = 'unknown'
           expect(BaseFormatter.executor({})).to eq expected_executor
         end
-
       end
-
     end
   end
 end
-

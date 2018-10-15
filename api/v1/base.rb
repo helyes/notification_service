@@ -4,12 +4,12 @@ module APIv1
     format :json
     prefix :api
 
-    helpers do
-      def return_no_content
-        status :no_content
-        ''
-      end
-    end
+    # helpers do
+    #   def return_no_content
+    #     status :no_content
+    #     ''
+    #   end
+    # end
 
     mount APIv1::Notifications
 

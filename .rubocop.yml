@@ -14,16 +14,18 @@ Metrics/MethodLength:
   Max: 100
 Metrics/AbcSize:
   Max: 20
+Metrics/ModuleLength:
+  Max: 160
+
 
 # Styles
 Style/FrozenStringLiteralComment:
   Enabled: false
-
 Style/RescueStandardError:
   Enabled: false
-
 Style/Documentation:
   Enabled: false
-
+Style/HashSyntax:
+  Enabled: false
 Style/BracesAroundHashParameters:
   EnforcedStyle: context_dependent

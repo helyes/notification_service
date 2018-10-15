@@ -3,8 +3,8 @@ module API
     class SuccessFormatter < BaseFormatter
       # this should be handled by rack midleware. Having it here only to show that it can be done this way too
       def self.call(object, env)
-        #puts "XXXXXXObject: #{object}"
-        #puts "XXXXXXObject: #{object.to_json}"
+        # puts "XXXXXXObject: #{object}"
+        # puts "XXXXXXObject: #{object.to_json}"
         body = init_body(env)
         add_item_count(body, object)
         add_pagination_info(body, env)
@@ -13,7 +13,7 @@ module API
       end
 
       def self.response_data_paginated?(env)
-        env['auc_pagination_meta']
+        env && env['auc_pagination_meta'] ? true : false
       end
 
       def self.add_entity(body, response_hash, env)
@@ -43,7 +43,6 @@ module API
         # letting it go with unknowns
         'unknowns'
       end
-
     end
   end
 end

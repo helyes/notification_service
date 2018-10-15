@@ -2,7 +2,6 @@ module APIv1
   # API exposing notifications
   # rubocop:disable Metrics/ClassLength
   class Notifications < Grape::API
-    #use ::PayloadEnricher
     use ::Timestamper
 
     # Adds pagination parameters. Max limit is a magic number, move it to props

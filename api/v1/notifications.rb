@@ -41,13 +41,13 @@ module APIv1
       # Adds auc_pagination_meta to rack env to be used by middlewares
       # Sets has_more field value by checking if resultset has more elements than limit
       # Chops result array to size of limit
-      def paginated(result, with, pagination_meta)
-        env['auc_pagination_meta'] = pagination_meta
-        if result.respond_to?(:count) && result.count > pagination_meta[:limit]
-          pagination_meta[:has_more] = true
-          result = result[0, pagination_meta[:limit]]
+      # Has to be handled here as default params (limit=?) are not accessible in rack env
+      def paginated(result, params, with = API::Entities::Notification)
+        env['auc_pagination_meta'] = params.to_hash
+        if result.respond_to?(:count) && result.count > params[:limit]
+          env['auc_pagination_meta'][:has_more] = true
+          result = result[0, params[:limit]]
         end
-        env['auc_pagination_meta'] = pagination_meta
         present result, with: with
       end
     end
@@ -57,8 +57,7 @@ module APIv1
       paginate
       get do
         paginated Notification.order(:created_at).offset(params[:offset]).limit(params[:limit] + 1),
-                  API::Entities::Notification,
-                  offset: params[:offset], limit: params[:limit]
+                  params
       end
 
       desc 'Returns notifications that has/not been tagged by given tag'
@@ -80,7 +79,7 @@ module APIv1
               " LIMIT #{params[:limit] + 1}"\
               " OFFSET #{params[:offset]}"\
 
-        paginated Notification.find_by_sql(sql), API::Entities::Notification, offset: params[:offset], limit: params[:limit]
+        paginated Notification.find_by_sql(sql), params
       end
 
       desc 'Returns notification by id'
@@ -98,13 +97,13 @@ module APIv1
       end
       paginate
       get 'summary/:summary' do
-        notification = Notification.where('summary LIKE ?', "%#{params[:summary]}%")
-                                   .order(:created_at)
-                                   .offset(params[:offset])
-                                   .limit(params[:limit] + 1)
-        raise NoMatchError if notification.blank?
+        notifications = Notification.where('summary LIKE ?', "%#{params[:summary]}%")
+                                    .order(:created_at)
+                                    .offset(params[:offset])
+                                    .limit(params[:limit] + 1)
+        raise NoMatchError if notifications.blank?
 
-        paginated notification, API::Entities::Notification, offset: params[:offset], limit: params[:limit]
+        paginated notifications, params
       end
 
       desc 'Creates new notification'

@@ -31,8 +31,7 @@ module API
                   'auc_pagination_meta' => { has_more: true } }
           body = {}
           SuccessFormatter.add_pagination_info(body, env)
-          puts "newbody: #{body}"
-          # expect(next_page_path.blank?).to be_falsey
+
           expect(body[:has_more]).to be true
           expect(body[:next_page].blank?).to be_falsey
 

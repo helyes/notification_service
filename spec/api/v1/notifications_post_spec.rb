@@ -38,7 +38,6 @@ describe APIv1::Notifications do
 
       it 'returns 400 when Summary is missing' do
         post '/api/v1/notifications', body.except(:summary), 'Content-Type' => 'application/json'
-        puts "XXXXLast resp: #{last_response.body}"
         expect(last_response.status).to eq(400)
         entity = fetch_first_error_as_hash(last_response.body)
         expect(entity.to_json).to eq(expected_response_summary_is_missing)

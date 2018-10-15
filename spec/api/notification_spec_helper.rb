@@ -10,16 +10,19 @@ module Spec
 
     def fetch_entities_as_hash(json_response)
       response_hash = JSON.parse json_response
+      expect(response_hash.key?('notifications')).to be true
       response_hash['notifications']
     end
 
     def fetch_first_entity_as_hash(json_response)
       response_hash = JSON.parse json_response
+      expect(response_hash.key?('notifications')).to be true
       response_hash['notifications'][0]
     end
 
     def fetch_first_error_as_hash(json_response)
       response_hash = JSON.parse json_response
+      expect(response_hash.key?('errors')).to be true
       response_hash['errors'][0]
     end
 
